@@ -106,6 +106,7 @@ jobs:
         run: |
           fullversion=$(cat /tmp/digests/full-version.txt)
           echo "fullversion=$fullversion" >> "$GITHUB_OUTPUT"
+          rm -f "/tmp/digests/full-version.txt"
 
       - name: Docker meta
         id: meta
