@@ -66,7 +66,8 @@ jobs:
 
       - name: Export exact version
         run: |
-          mysqlsh_version=$(docker run --rm "$REGISTRY_IMAGE:${{ steps.build.outputs.digest }}" mysqlsh --version)
+          mysqlsh_version=$(docker run --rm "$REGISTRY_IMAGE@${{ steps.build.outputs.digest }}" mysqlsh --version)
+          echo "$mysqlsh_version"
           echo "fullversion=${mysqlsh_version#mysqlsh}" | awk -F' ' '{print $2}' > /tmp/digests/full-version.txt
 
       - name: Upload digest
