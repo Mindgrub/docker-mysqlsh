@@ -68,7 +68,7 @@ jobs:
         run: |
           mysqlsh_version=$(docker run --rm "$REGISTRY_IMAGE@${{ steps.build.outputs.digest }}" mysqlsh --version)
           echo "$mysqlsh_version"
-          echo "fullversion=${mysqlsh_version#mysqlsh}" | awk -F' ' '{print $3}' > /tmp/digests/full-version.txt
+          echo "${mysqlsh_version#mysqlsh}" | awk -F' ' '{print $2}' > /tmp/digests/full-version.txt
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
@@ -103,7 +103,9 @@ jobs:
 
       - name: Get full version
         id: fullversion
-        run: cat /tmp/digests/full-version.txt >> "$GITHUB_OUTPUT"
+        run: |
+          fullversion=$(cat /tmp/digests/full-version.txt)
+          echo "fullversion=$fullversion" >> "$GITHUB_OUTPUT"
 
       - name: Docker meta
         id: meta
