@@ -7,8 +7,8 @@ set -e
 : "${MYSQLSH_THREADS:=4}"
 : "${MYSQLSH_SSL_MODE:=PREFERRED}"
 
-escaped_source_pw=$(echo -n "$SOURCE_PASSWORD" | perl -MURI::Escape -wlne 'print uri_escape $_')
-escaped_destination_pw=$(echo -n "$DESTINATION_PASSWORD" | perl -MURI::Escape -wlne 'print uri_escape $_')
+escaped_source_pw=$(echo -n "$SOURCE_PASSWORD" | python3 -c "import urllib.parse; print(urllib.parse.quote(input()))")
+escaped_destination_pw=$(echo -n "$DESTINATION_PASSWORD" | python3 -c "import urllib.parse; print(urllib.parse.quote(input()))")
 
 source_uri="${SOURCE_USER}:${escaped_source_pw}@${SOURCE_HOST}:${SOURCE_PORT}"
 destination_uri="${DESTINATION_USER}:${escaped_destination_pw}@${DESTINATION_HOST}:${DESTINATION_PORT}"
