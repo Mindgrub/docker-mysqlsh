@@ -115,8 +115,9 @@ jobs:
           tags: |
             type=raw,value=latest,enabled=${{ matrix.mysql_version == '8.4' }}
             type=raw,value=8,enabled=${{ matrix.mysql_version == '8.4' }}
-            type=raw,value=${{ matrix.alpine_version }}-debian
-            type=raw,value=${{ matrix.alpine_version }}-bookworm
+            type=raw,value=${{ matrix.mysql_version }}
+            type=raw,value=${{ matrix.mysql_version }}-debian
+            type=raw,value=${{ matrix.mysql_version }}-bookworm
             type=raw,value=${{ steps.fullversion.outputs.fullversion }}-debian
             type=raw,value=${{ steps.fullversion.outputs.fullversion }}-bookworm
 
