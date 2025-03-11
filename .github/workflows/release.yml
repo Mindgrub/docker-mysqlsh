@@ -114,8 +114,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
-            type=raw,value=latest,enabled=${{ matrix.mysql_version == '8.4' }}
-            type=raw,value=8,enabled=${{ matrix.mysql_version == '8.4' }}
+            type=raw,value=latest,enable=${{ matrix.mysql_version == '8.4' }}
+            type=raw,value=8,enable=${{ matrix.mysql_version == '8.4' }}
             type=raw,value=${{ matrix.mysql_version }}
             type=raw,value=${{ matrix.mysql_version }}-debian
             type=raw,value=${{ matrix.mysql_version }}-bookworm
