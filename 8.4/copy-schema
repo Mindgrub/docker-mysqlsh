@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+: "${SOURCE_PORT:=3306}"
+: "${DESTINATION_PORT:=3306}"
+: "${MYSQLSH_THREADS:=4}"
+: "${MYSQLSH_SSL_MODE:=PREFERRED}"
+
+source_uri="${SOURCE_USER}:${SOURCE_PASSWORD}@${SOURCE_HOST}:${SOURCE_PORT}"
+destination_uri="${DESTINATION_USER}:${DESTINATION_PASSWORD}@${DESTINATION_HOST}:${DESTINATION_PORT}"
+
+if [ -n "$RECREATE_SCHEMA" ]; then
+  echo "Checking the existence of destination schema: $DESTINATION_SCHEMA"
+  existing_schema=$(mysql --ssl-mode="$MYSQLSH_SSL_MODE" -NB -h "$DESTINATION_HOST" -P "$DESTINATION_PORT" -u "$DESTINATION_USER" -p"$DESTINATION_PASSWORD" -e "SELECT default_character_set_name, default_collation_name FROM information_schema.SCHEMATA WHERE schema_name = '$DESTINATION_SCHEMA';")
+  if [ -n "$existing_schema" ]; then
+    echo "Dropping and re-creating destination schema: $DESTINATION_SCHEMA"
+    schema_charset=$(echo "$existing_schema" | cut -f1)
+    schema_collation=$(echo "$existing_schema" | cut -f2)
+    mysql --ssl-mode="$MYSQLSH_SSL_MODE" -h "$DESTINATION_HOST" -P "$DESTINATION_PORT" -u "$DESTINATION_USER" -p"$DESTINATION_PASSWORD" -e "DROP DATABASE $DESTINATION_SCHEMA; CREATE DATABASE $DESTINATION_SCHEMA CHARACTER SET $schema_charset COLLATE $schema_collation;"
+  fi
+fi
+
+python_cmd='util.copy_schemas(["'"$SOURCE_SCHEMA"'"], "'"$destination_uri"'", {"schema": "'"$DESTINATION_SCHEMA"'", "threads": '"$MYSQLSH_THREADS"', "showProgress": False, "compatibility": ["strip_definers"], "consistent": False})'
+echo "$python_cmd" | mysqlsh "$source_uri" --ssl-mode="$MYSQLSH_SSL_MODE" --py
