@@ -7,8 +7,11 @@ set -e
 : "${MYSQLSH_THREADS:=4}"
 : "${MYSQLSH_SSL_MODE:=PREFERRED}"
 
-source_uri="${SOURCE_USER}:${SOURCE_PASSWORD}@${SOURCE_HOST}:${SOURCE_PORT}"
-destination_uri="${DESTINATION_USER}:${DESTINATION_PASSWORD}@${DESTINATION_HOST}:${DESTINATION_PORT}"
+escaped_source_pw=$(echo -n "$SOURCE_PASSWORD" | perl -MURI::Escape -wlne 'print uri_escape $_')
+escaped_destination_pw=$(echo -n "$DESTINATION_PASSWORD" | perl -MURI::Escape -wlne 'print uri_escape $_')
+
+source_uri="${SOURCE_USER}:${escaped_source_pw}@${SOURCE_HOST}:${SOURCE_PORT}"
+destination_uri="${DESTINATION_USER}:${escaped_destination_pw}@${DESTINATION_HOST}:${DESTINATION_PORT}"
 
 if [ -n "$RECREATE_SCHEMA" ]; then
   echo "Checking the existence of destination schema: $DESTINATION_SCHEMA"
