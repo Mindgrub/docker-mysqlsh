@@ -11,7 +11,7 @@ RUN cd /tmp \
     && DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config.deb \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends mysql-community-client mysql-shell \
-    && /usr/lib/mysqlsh/bin/python3.13 -m pip install boto3 \
+    && echo "import pip; pip.main(['install', 'boto3'])" | mysqlsh --py \
     && rm -rf /tmp/* /var/tmp/* \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/log/apt/* \
