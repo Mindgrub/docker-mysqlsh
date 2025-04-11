@@ -63,5 +63,9 @@ try:
 except Exception as e:
     print(e)
     if sfn_token:
-        sfn.send_task_failure(taskToken=sfn_token, error=type(e), cause=f'{e}')
+        sfn.send_task_failure(
+            taskToken=sfn_token,
+            error=type(e).__name__,
+            cause=f'{e}',
+        )
     sys.exit(1)
