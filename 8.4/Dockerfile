@@ -10,7 +10,8 @@ RUN cd /tmp \
     && echo "mysql-apt-config mysql-apt-config/select-server string ${DEB_CONF_SERVER}" | debconf-set-selections \
     && DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config.deb \
     && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 mysql-community-client mysql-shell \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends mysql-community-client mysql-shell \
+    && /usr/lib/mysqlsh/bin/python3.13 -m pip install boto3 \
     && rm -rf /tmp/* /var/tmp/* \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/log/apt/* \
@@ -18,6 +19,9 @@ RUN cd /tmp \
     && rm -rf /var/log/bootstrap.log \
     && rm -rf /var/log/alternatives.log
 
+COPY copy_schema.py /
+COPY s3_dump_schema.py /
+COPY s3_load_schema.py /
 COPY copy-schema /usr/bin/mysqlsh-copy-schema
 
 CMD ["/usr/bin/mysqlsh"]
